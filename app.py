@@ -38,22 +38,22 @@ def handle_exception(e):
 
 @app.route('/predict', methods=['POST'])
 @validate()
-def predict(body: PredictionRequest):
+def predict(prediction_request: PredictionRequest):
     """
     POST endpoint to get a stock prediction.
 
     :param body: The validated PredictionRequest object containing symbol and date.
     :return: A JSON response conforming to the PredictionResponse model.
     """
-    symbol = body.symbol.upper() # Standardize symbol
-    date_str = body.date.strftime('%Y-%m-%d')
+    symbol = prediction_request.symbol.upper() # Standardize symbol
+    date_str = prediction_request.date.strftime('%Y-%m-%d')
     logger.info(f"Received prediction request for symbol: {symbol} on date: {date_str}")
 
     
     if symbol == "AAPL" and date_str == "2024-10-25":
         prediction_result = {
             "symbol": symbol,
-            "date": body.date,
+            "date": prediction_request.date,
             "prediction": True,
             "confidence": 0.83
         }
@@ -62,7 +62,7 @@ def predict(body: PredictionRequest):
     else:
         prediction_result = {
             "symbol": symbol,
-            "date": body.date,
+            "date": prediction_request.date,
             "prediction": False,
             "confidence": 0.55
         }
