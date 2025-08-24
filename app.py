@@ -4,6 +4,7 @@ from flask import Flask, jsonify
 from pydantic import ValidationError
 
 from data.models import PredictionRequest, PredictionResponse
+from services.prediction_service import PredictionService
 
 
 app = Flask(__name__)
@@ -38,39 +39,22 @@ def handle_exception(e):
 
 @app.route('/predict', methods=['POST'])
 @validate()
-def predict(prediction_request: PredictionRequest):
+def predict(body: PredictionRequest):
     """
     POST endpoint to get a stock prediction.
 
     :param body: The validated PredictionRequest object containing symbol and date.
     :return: A JSON response conforming to the PredictionResponse model.
     """
-    symbol = prediction_request.symbol.upper() # Standardize symbol
-    date_str = prediction_request.date.strftime('%Y-%m-%d')
-    logger.info(f"Received prediction request for symbol: {symbol} on date: {date_str}")
+    prediction_service = PredictionService()
+    body.symbol = body.symbol.upper() # Standardize symbol
+    date_str = body.date.strftime('%Y-%m-%d')
+    logger.info(f"Received prediction request for symbol: {body.symbol} on date: {date_str}")
+    prediction_result= prediction_service.predict(body)
 
+    logger.info(f"Successfully processed request for {body.symbol}. Confidence: {prediction_result.confidence}")
     
-    if symbol == "AAPL" and date_str == "2024-10-25":
-        prediction_result = {
-            "symbol": symbol,
-            "date": prediction_request.date,
-            "prediction": True,
-            "confidence": 0.83
-        }
-    elif symbol == "INVALID":
-        raise PredictionError(f"Symbol '{symbol}' is not supported.", status_code=404)
-    else:
-        prediction_result = {
-            "symbol": symbol,
-            "date": prediction_request.date,
-            "prediction": False,
-            "confidence": 0.55
-        }
-
-    response_data = PredictionResponse(**prediction_result)
-    logger.info(f"Successfully processed request for {symbol}. Confidence: {response_data.confidence}")
-    
-    return jsonify(response_data.model_dump())
+    return jsonify(prediction_result.model_dump())
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
