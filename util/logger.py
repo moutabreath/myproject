@@ -1,15 +1,11 @@
 import logging
-
+import logging.handlers
 
 def setup_logging(level: int = logging.INFO) -> logging.Logger:
-    logger = logging.getLogger("finq_ai")
-    if not logger.handlers:
-        handler = logging.StreamHandler()
-        formatter = logging.Formatter(
-        "%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-        "%Y-%m-%d %H:%M:%S",
-        )
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-        logger.setLevel(level)
+    handler = logging.handlers.WatchedFileHandler("finq_ai.log")
+    logger = logging.getLogger()
+    formatter =logging.Formatter("%(asctime)s:%(name)s:%(levelname)s {%(module)s %(funcName)s}:%(message)s")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(level)
     return logger

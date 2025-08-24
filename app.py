@@ -3,7 +3,7 @@ from flask_pydantic import validate
 from flask import Flask, jsonify
 from pydantic import ValidationError
 
-from data.models import PredictionRequest, PredictionResponse
+from api.models import PredictionRequest, PredictionResponse
 from services.prediction_service import PredictionService
 from util.logger import setup_logging
 
