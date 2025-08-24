@@ -8,4 +8,5 @@ dependencies = [
     "flask>=3.1.2",
     "flask-pydantic>=0.13.1",
     "pydantic>=2.11.7",
+    "yfinance>=0.2.65",
 ]
