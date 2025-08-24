@@ -3,4 +3,10 @@
  Steps taken with AI:
  Asked to create data models, and flask endpoint. 
  Asked to get the data from yahoo finance.
- Asked to create a prediction service that does the actual calculation.
+ Asked to create the actual calculation.
+ Me: :-)
+    design the various componenets
+    connect the components
+    integrate several bots into a best solution
+    refactor the code
+    ensure everything works

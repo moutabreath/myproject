@@ -5,14 +5,12 @@ from pydantic import ValidationError
 
 from data.models import PredictionRequest, PredictionResponse
 from services.prediction_service import PredictionService
-
+from util.logger import setup_logging
 
 app = Flask(__name__)
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+logger = setup_logging(logging.INFO)
 
-# --- Custom Exception ---
 class PredictionError(Exception):
     """Custom exception for application-specific errors."""
     def __init__(self, message, status_code=500):
@@ -39,7 +37,7 @@ def handle_exception(e):
 
 @app.route('/predict', methods=['POST'])
 @validate()
-def predict(body: PredictionRequest):
+def predict(body: PredictionRequest) -> PredictionResponse:
     """
     POST endpoint to get a stock prediction.
 
@@ -50,11 +48,17 @@ def predict(body: PredictionRequest):
     body.symbol = body.symbol.upper() # Standardize symbol
     date_str = body.date.strftime('%Y-%m-%d')
     logger.info(f"Received prediction request for symbol: {body.symbol} on date: {date_str}")
-    prediction_result= prediction_service.predict(body)
+    forecast_result= prediction_service.predict(body.symbol, body.date)
+    prediction_response= PredictionResponse(
+        symbol=body.symbol,
+        date=body.date,
+        prediction=forecast_result.prediction,
+        confidence=forecast_result.confidence
+    )
 
-    logger.info(f"Successfully processed request for {body.symbol}. Confidence: {prediction_result.confidence}")
+    logger.info(f"Successfully processed request for {body.symbol}. Confidence: {prediction_response.confidence}")
     
-    return jsonify(prediction_result.model_dump())
+    return jsonify(prediction_response.model_dump())
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
