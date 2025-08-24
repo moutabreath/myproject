@@ -26,8 +26,6 @@ class YahooFinanceClient:
                 logging.warning(f"No data found for tickers {ticker_symbol}, {self.index_ticker} in the specified date range.")
                 return None
 
-            # Explicitly create copies to avoid SettingWithCopyWarning.
-            # This happens when modifying a slice of a DataFrame that yfinance returns.
             stock_data = all_data[ticker_symbol].copy()
             sp500_data = all_data[self.index_ticker].copy()
 
