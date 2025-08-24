@@ -26,8 +26,10 @@ class YahooFinanceClient:
                 logging.warning(f"No data found for tickers {ticker_symbol}, {self.index_ticker} in the specified date range.")
                 return None
 
-            stock_data = all_data[ticker_symbol]
-            sp500_data = all_data[self.index_ticker]
+            # Explicitly create copies to avoid SettingWithCopyWarning.
+            # This happens when modifying a slice of a DataFrame that yfinance returns.
+            stock_data = all_data[ticker_symbol].copy()
+            sp500_data = all_data[self.index_ticker].copy()
 
             # Drop rows where all values are NaN, which can happen if a ticker has no data for a period
             stock_data.dropna(how='all', inplace=True)
@@ -54,3 +56,4 @@ class YahooFinanceClient:
         except Exception as e:
             logging.error(f"An error occurred while fetching data for {ticker_symbol}: {e}", exc_info=True)
             return None
+
