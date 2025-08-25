@@ -4,6 +4,7 @@
 - Created data models and a Flask endpoint.
 - Retrieved market data from Yahoo Finance.
 - Implemented the core calculation.
+- Code Review with CodeRabbit
 
 ## My contributions
 - Design the various components.
