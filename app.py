@@ -59,11 +59,15 @@ def predict(body: PredictionRequest) -> PredictionResponse:
         symbol=body.symbol,
         date=body.date,
         prediction=forecast_result.prediction,
-        confidence=forecast_result.confidence
-    )
-
+        confidence=forecast_result.confidence)
     logger.info(f"Successfully processed request for {body.symbol}. Confidence: {prediction_response.confidence}")
     return jsonify(prediction_response.model_dump(mode="json"))
 
+import os
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    debug = os.getenv("FLASK_DEBUG", "0") == "1"
+    port = int(os.getenv("PORT", "5000"))
+    host = os.getenv("HOST", "127.0.0.1")
+    app.run(debug=debug, host=host, port=port) 
+    
