@@ -1,13 +1,18 @@
 import logging
+import os
 from flask_pydantic import validate
 from flask import Flask, jsonify
 from pydantic import ValidationError
+from werkzeug.exceptions import HTTPException
+from asgiref.wsgi import WsgiToAsgi
 
 from api.models import PredictionRequest, PredictionResponse
 from services.prediction_service import PredictionService
 from util.logger import setup_logging
 
 app = Flask(__name__)
+# Wrap the Flask app with ASGI middleware
+asgi_app = WsgiToAsgi(app)
 
 logger = setup_logging(logging.INFO)
 
@@ -17,9 +22,6 @@ class PredictionError(Exception):
         super().__init__(message)
         self.message = message
         self.status_code = status_code
-
-from pydantic import ValidationError
-from werkzeug.exceptions import HTTPException
 
  # --- Global Error Handler ---
 @app.errorhandler(Exception)
@@ -61,13 +63,21 @@ def predict(body: PredictionRequest) -> PredictionResponse:
         prediction=forecast_result.prediction,
         confidence=forecast_result.confidence)
     logger.info(f"Successfully processed request for {body.symbol}. Confidence: {prediction_response.confidence}")
-    return jsonify(prediction_response.model_dump(mode="json"))
-
-import os
+    return prediction_response
 
 if __name__ == '__main__':
     debug = os.getenv("FLASK_DEBUG", "0") == "1"
     port = int(os.getenv("PORT", "5000"))
     host = os.getenv("HOST", "127.0.0.1")
-    app.run(debug=debug, host=host, port=port) 
     
+    if debug:
+        app.run(debug=True, host=host, port=port)
+    else:
+        # In production mode, use Uvicorn
+        import uvicorn
+        uvicorn.run(
+            asgi_app,
+            host=host,
+            port=port,
+            log_level="info"
+        )

@@ -1,4 +1,5 @@
-*/__pycache__/
+__pycache__/
 uv.lock
-.vscode/launch.json
+.vscode/launch.jason
 finq_ai.log
+.vscode/launch.json
