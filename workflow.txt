@@ -1,12 +1,13 @@
 
 
- Steps taken with AI:
- Asked to create data models, and flask endpoint. 
- Asked to get the data from yahoo finance.
- Asked to create the actual calculation.
- Me: :-)
-    design the various componenets
-    connect the components
-    integrate several AI bots' respone into a single readable and efficient solution
-    refactor the code
-    ensure everything works
+## Steps taken with AI
+- Created data models and a Flask endpoint.
+- Retrieved market data from Yahoo Finance.
+- Implemented the core calculation.
+
+## My contributions
+- Design the various components.
+- Connect the components.
+- Integrate several AI bots' responses into a single, readable, and efficient solution.
+- Refactor the code.
+- Ensure everything works.
