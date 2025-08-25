@@ -12,3 +12,9 @@
 - Integrate several AI bots' responses into a single, readable, and efficient solution.
 - Refactor the code.
 - Ensure everything works.
+
+## For scaling
+- Use different binaries for yahoo client and the prediction service
+- Add kubernetes for autoscaling managment
+- Put the above services in different pods so they could scale seperately
+- Add caching to s&p 500W and requested stocks
