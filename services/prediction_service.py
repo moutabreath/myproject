@@ -6,7 +6,7 @@ import pandas as pd
 
 from services.model import ForecastResult
 
-from services.yahoo_finance_client import YahooFinanceClient
+from outward_services.yahoo_finance_client import YahooFinanceClient
 
 
 class PredictionService:
