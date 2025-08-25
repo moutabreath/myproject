@@ -18,22 +18,28 @@ class PredictionError(Exception):
         self.message = message
         self.status_code = status_code
 
-# --- Global Error Handler ---
+from pydantic import ValidationError
+from werkzeug.exceptions import HTTPException
+
+ # --- Global Error Handler ---
 @app.errorhandler(Exception)
 def handle_exception(e):
     """General error handler for unhandled exceptions."""
+    # Let Werkzeug/Flask HTTP errors keep their intended status codes
+    if isinstance(e, HTTPException):
+        return jsonify({"error": e.name, "message": e.description}), e.code
+
     if isinstance(e, PredictionError):
-        logger.error(f"Prediction Error: {e.message} (Status: {e.status_code})")
-        return jsonify({"error": e.message}), e.status_code
+         logger.error(f"Prediction Error: {e.message} (Status: {e.status_code})")
+         return jsonify({"error": e.message}), e.status_code
 
     if isinstance(e, ValidationError):
-        error_details = [{"loc": err["loc"], "msg": err["msg"]} for err in e.errors()]
-        logger.warning(f"Validation Error: {error_details}")
-        return jsonify({"error": "Invalid request body", "details": error_details}), 400
+         error_details = [{"loc": err["loc"], "msg": err["msg"]} for err in e.errors()]
+         logger.warning(f"Validation Error: {error_details}")
+         return jsonify({"error": "Invalid request body", "details": error_details}), 400
 
     logger.exception("An unexpected error occurred.")
     return jsonify({"error": "An unexpected server error occurred."}), 500
-
 
 @app.route('/predict', methods=['POST'])
 @validate()
@@ -49,7 +55,7 @@ def predict(body: PredictionRequest) -> PredictionResponse:
     date_str = body.date.strftime('%Y-%m-%d')
     logger.info(f"Received prediction request for symbol: {body.symbol} on date: {date_str}")
     forecast_result= prediction_service.predict(body.symbol, body.date)
-    prediction_response= PredictionResponse(
+    prediction_response = PredictionResponse(
         symbol=body.symbol,
         date=body.date,
         prediction=forecast_result.prediction,
@@ -57,8 +63,7 @@ def predict(body: PredictionRequest) -> PredictionResponse:
     )
 
     logger.info(f"Successfully processed request for {body.symbol}. Confidence: {prediction_response.confidence}")
-    
-    return jsonify(prediction_response.model_dump())
+    return jsonify(prediction_response.model_dump(mode="json"))
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

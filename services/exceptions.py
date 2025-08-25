@@ -28,4 +28,5 @@ class DataFetchError(ServiceError):
     """Raised when there is a network or other error fetching data."""
 
     def __init__(self, symbol: str):
+        self.symbol = symbol
         super().__init__(f"A network error or other issue occurred while fetching data for '{symbol}'.")

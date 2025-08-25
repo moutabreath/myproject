@@ -37,15 +37,15 @@ class PredictionService:
         return (end_price / current_price) - 1.0
     
     @staticmethod
-    def _calculate_confidence(s_close, i_close, spread, loopback_days, horizon_days):
+    def _calculate_confidence(s_close, i_close, spread, lookback_days, horizon_days):
         # A simple confidence heuristic: scaled absolute spread by expected volatility proxy.
         # Use recent (K) realized volatility of stock-index spread as a denominator; map via logistic to 0..1.
-        spread_hist = (s_close.pct_change() - i_close.pct_change()).dropna().tail(loopback_days)
+        spread_hist = (s_close.pct_change() - i_close.pct_change()).dropna().tail(lookback_days)
         denom = max(spread_hist.std(), 1e-4)
         z = float(abs(spread) / (denom * np.sqrt(horizon_days))) # scale with horizon
         confidence = float(1.0 / (1.0 + np.exp(-z))) # sigmoid
         return confidence
-
+    
     @staticmethod
     def _calculate_future_prediction(stock_close: pd.Series, sp500_close: pd.Series, lookback_days: int, horizon_days: int):
         stock_latest_close_value = float(stock_close.iloc[-1])
@@ -67,8 +67,10 @@ class PredictionService:
         :param symbol: The stock ticker symbol.
         :param requested_date: The date for the prediction.
         :param lookback_days: The number of past trading days to consider.
-        :return: A PredictionResponse object with the prediction result.
-        """
+        :param horizon_days: The number of future trading days to forecast.
+        :return: A ForecastResult object with the prediction result and confidence score.
+        """       
+        logging.info(f"Generating prediction for {symbol} on {requested_date.isoformat()}.")
         lookback_days = lookback_days or self.k
         horizon_days = horizon_days or self.number_of_future_trading_days
         # To ensure we get enough trading days, fetch a larger window of calendar days.
