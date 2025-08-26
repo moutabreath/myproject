@@ -7,6 +7,7 @@ from werkzeug.exceptions import HTTPException
 from asgiref.wsgi import WsgiToAsgi
 
 from api.models import PredictionRequest, PredictionResponse
+from outward_services.exceptions import TickerNotFoundError
 from services.prediction_service import PredictionService
 from util.logger import setup_logging
 
@@ -39,6 +40,14 @@ def handle_exception(e):
          error_details = [{"loc": err["loc"], "msg": err["msg"]} for err in e.errors()]
          logger.warning(f"Validation Error: {error_details}")
          return jsonify({"error": "Invalid request body", "details": error_details}), 400
+
+    if isinstance(e, TickerNotFoundError):
+        logger.warning(f"Invalid ticker symbol: {e.symbol}")
+        return jsonify({
+            "error": "Invalid ticker symbol",
+            "message": str(e),
+            "symbol": e.symbol
+        }), 400
 
     logger.exception("An unexpected error occurred.")
     return jsonify({"error": "An unexpected server error occurred."}), 500

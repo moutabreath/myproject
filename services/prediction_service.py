@@ -78,19 +78,12 @@ class PredictionService:
         # yfinance `end` parameter is exclusive, so add one day to include the requested date.
         end_date = requested_date + timedelta(days=1)
 
-        logging.info(f"Fetching data for {symbol} from {start_date.isoformat()} to {end_date.isoformat()}")
-        try:
-            sp500_data, stock_data = self.yahoo_finance_client.fetch_ohlcv_data(
-                ticker_symbol=symbol,
-                start_date=start_date.isoformat(),
-                end_date=end_date.isoformat()
-            )
-        except:
-            return ForecastResult(prediction=False, confidence=0.0)
-
-        if stock_data is None:
-            logging.error(f"Could not fetch data for {symbol}.")
-            return ForecastResult(prediction=False, confidence=0.0)
+        logging.info(f"Fetching data for {symbol} from {start_date.isoformat()} to {end_date.isoformat()}")    
+        sp500_data, stock_data = self.yahoo_finance_client.fetch_ohlcv_data(
+            ticker_symbol=symbol,
+            start_date=start_date.isoformat(),
+            end_date=end_date.isoformat()
+        )
 
 
         # Filter data to be on or before the requested date, as yfinance might return more.
