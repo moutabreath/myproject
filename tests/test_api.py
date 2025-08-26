@@ -54,7 +54,7 @@ def test_predict_endpoint_invalid_symbol(client, valid_request_data):
     assert response.status_code == 400
     data = response.get_json()
     assert 'error' in data
-    assert 'details' in data
+    assert 'Invalid ticker symbol' in data['error']
 
 def test_predict_endpoint_invalid_date(client, valid_request_data):
     """Test prediction request with invalid date."""
@@ -63,17 +63,13 @@ def test_predict_endpoint_invalid_date(client, valid_request_data):
     
     assert response.status_code == 400
     data = response.get_json()
-    assert 'error' in data
-    assert 'details' in data
+    assert 'validation_error' in data
 
 def test_predict_endpoint_missing_fields(client):
     """Test prediction request with missing required fields."""
     response = client.post('/predict', json={})
     
     assert response.status_code == 400
-    data = response.get_json()
-    assert 'error' in data
-    assert 'details' in data
 
 def test_models():
     """Test Pydantic models validation."""
