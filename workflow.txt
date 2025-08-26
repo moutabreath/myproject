@@ -5,6 +5,7 @@
 - Retrieved market data from Yahoo Finance.
 - Implemented the core calculation.
 - Code Review with CodeRabbit
+- Helped with tests.
 
 ## My contributions
 - Design the various components.
@@ -21,3 +22,8 @@
 - Add database for past queries. I would use mongo because of its dynamic nature. It can store json like data which is very dynamic.
 - Add queueing for long running predictions
 - Use FastAPI for async operations.
+- Propagating exceptions to the API layer will be replaced by dedicated Class instead, 
+  and the api will be in charge of logic of the type of request (such as Bad Request)
+
+## Notes
+    I did not test the logic of the prediction because it was not a production ready prediction.
