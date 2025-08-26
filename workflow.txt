@@ -15,14 +15,13 @@
 - Ensure everything works.
 
 ## For scaling
-- Use different binaries for yahoo client and the prediction service
-- Containerize and add kubernetes for autoscaling managment
-- Put the above services in different pods so they could scale seperately
-- Add in memory caching and distibuted caching (like redis) to s&p 500 and requested stocks
-- Add database for past queries. I would use mongo because of its dynamic nature. It can store json like data which is very dynamic.
-- Add queueing for long running predictions
-- Use FastAPI for async operations.
-- Propagating exceptions to the API layer will be replaced by dedicated Class instead, 
+- Use separate binaries for the Yahoo client and the prediction service.
+- Containerize and use Kubernetes for autoscaling management.
+- Place each service in its own pod so they can scale independently.
+- Add in-memory and distributed caching (e.g., Redis) for S&P 500 constituents and frequently requested tickers.
+- Add a database for past queries (e.g., MongoDB) to store JSON-like documents.
+- Add queuing for long-running predictions.
+- Use FastAPI for asynchronous I/O operations.- Propagating exceptions to the API layer will be replaced by dedicated Class instead, 
   and the api will be in charge of logic of the type of request (such as Bad Request)
 
 ## Notes

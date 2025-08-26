@@ -33,9 +33,8 @@ def handle_exception(e):
         return jsonify({"error": e.name, "message": e.description}), e.code
 
     if isinstance(e, PredictionError):
-         logger.error(f"Prediction Error: {e.message} (Status: {e.status_code})")
-         return jsonify({"error": e.message}), e.status_code
-
+        logger.error(f"Prediction Error: {e.message} (Status: {e.status_code})")
+        return jsonify({"error": e.message}), e.status_code
     if isinstance(e, ValidationError):
          error_details = [{"loc": err["loc"], "msg": err["msg"]} for err in e.errors()]
          logger.warning(f"Validation Error: {error_details}")
