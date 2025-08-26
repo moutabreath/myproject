@@ -1,0 +1,5 @@
+__pycache__/
+uv.lock
+.vscode/launch.jason
+finq_ai.log
+.vscode/launch.json

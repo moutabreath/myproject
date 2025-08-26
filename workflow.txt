@@ -1,0 +1,28 @@
+
+
+## Steps taken with AI
+- Created data models and a Flask endpoint.
+- Retrieved market data from Yahoo Finance.
+- Implemented the core calculation.
+- Code Review with CodeRabbit
+- Helped with tests.
+
+## My contributions
+- Design the various components.
+- Connect the components.
+- Integrate several AI bots' responses into a single, readable, and efficient solution.
+- Refactor the code.
+- Ensure everything works.
+
+## For scaling
+- Use separate binaries for the Yahoo client and the prediction service.
+- Containerize and use Kubernetes for autoscaling management.
+- Place each service in its own pod so they can scale independently.
+- Add in-memory and distributed caching (e.g., Redis) for S&P 500 constituents and frequently requested tickers.
+- Add a database for past queries (e.g., MongoDB) to store JSON-like documents.
+- Add queuing for long-running predictions.
+- Use FastAPI for asynchronous I/O operations.- Propagating exceptions to the API layer will be replaced by dedicated Class instead, 
+  and the api will be in charge of logic of the type of request (such as Bad Request)
+
+## Notes
+    I did not test the logic of the prediction because it was not a production ready prediction.
