@@ -46,12 +46,6 @@ class YahooFinanceClient:
                 group_by='ticker',
                 progress=False  # Disable progress bar for cleaner logs
             )
-
-            if ticker_symbol.upper() in yf.shared._ERRORS:
-                error_msg = yf.shared._ERRORS[ticker_symbol.upper()]
-                logging.warning(f"yfinance failed to download data for {ticker_symbol}: {error_msg}")
-            
-
             stock_data = YahooFinanceClient._extract(all_data, ticker_symbol)
             if stock_data is None or stock_data.dropna(how='all').empty:
                 logging.warning(f"No data found for {ticker_symbol} in the specified date range.")
