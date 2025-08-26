@@ -41,11 +41,15 @@ class PredictionService:
         # A simple confidence heuristic: scaled absolute spread by expected volatility proxy.
         # Use recent (K) realized volatility of stock-index spread as a denominator; map via logistic to 0..1.
         spread_hist = (s_close.pct_change() - i_close.pct_change()).dropna().tail(lookback_days)
-        denom = max(spread_hist.std(), 1e-4)
-        z = float(abs(spread) / (denom * np.sqrt(horizon_days))) # scale with horizon
-        confidence = float(1.0 / (1.0 + np.exp(-z))) # sigmoid
-        return confidence
-    
+        std_val = float(spread_hist.std())
+        # Guard against NaN/inf/zero volatility
+        if not np.isfinite(std_val) or std_val <= 0.0:
+            std_val = 1e-4
+        h = max(int(horizon_days), 1)
+        z = float(abs(spread) / (std_val * np.sqrt(h)))  # scale with horizon
+        # Map to [0,1] with 0 at neutrality and saturation towards 1 for strong signal
+        confidence = float(1.0 - np.exp(-z))
+        return confidence    
     @staticmethod
     def _calculate_future_prediction(stock_close: pd.Series, sp500_close: pd.Series, lookback_days: int, horizon_days: int):
         stock_latest_close_value = float(stock_close.iloc[-1])
